@@ -1,4 +1,4 @@
-<html lang="en">
+<!-- <html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -42,4 +42,86 @@
     <script src="script.js"></script>
 </body>
 
+</html> -->
+
+<!DOCTYPE html>
+<html>
+<body>
+ 
+<h1>The iframe element</h1>
+ 
+<iframe width='700px' height='800px' id="myIframe" title="Contact Us Form"></iframe>
+ 
+<script>
+
+// -----------------------------
+// Detect UTMs or Referrer Fallback
+// -----------------------------
+function detectUTM() {
+    const params = new URLSearchParams(window.location.search);
+    console.log(params + 'abcd');
+
+    // If URL already contains UTMs → use them
+    if (params.has("utm_source") || params.has("utm_medium") || params.has("utm_campaign") || params.has("utm_content") || params.has("utm_term") || params.has("gclid") || params.has("fblid")) {
+        return params.toString();
+    }
+
+    // If no UTMs → detect from referrer
+    const ref = document.referrer.toLowerCase();
+
+    let src = "direct";
+    let med = "none";
+
+    console.log(ref + 'ref');
+
+    if (ref.includes("facebook.com")) {
+        src = "facebook";
+        med = "social";
+    } 
+    else if (ref.includes("instagram.com")) {
+        src = "instagram";
+        med = "social";
+    } 
+    else if (ref.includes("linkedin.com")) {
+        src = "linkedin";
+        med = "social";
+    } 
+    else if (ref.includes("t.co") || ref.includes("twitter.com")) {
+        src = "twitter";
+        med = "social";
+    }
+    else if (
+        ref.includes("google.") ||
+        ref.includes("bing.") ||
+        ref.includes("yahoo.")
+    ) {
+        med = "organic";
+        if (ref.includes("google.")) src = "google";
+        if (ref.includes("bing.")) src = "bing";
+        if (ref.includes("yahoo.")) src = "yahoo";
+    }
+
+    // Attach fallback UTMs
+    params.set("utm_source", src);
+    params.set("utm_medium", med);
+
+    return params.toString();
+}
+
+// -----------------------------
+// Build final Iframe URL
+// -----------------------------
+const iframeBase = 'https://oasismarinas--dev--c.sandbox.vf.force.com/apex/contactUsForm';
+
+const utmQuery = detectUTM();  // handles both URL UTMs and fallback
+
+const iframeUrl = iframeBase + "?" + utmQuery;
+
+document.getElementById("myIframe").src = iframeUrl;
+
+console.log("Final iframe URL:", iframeUrl);
+
+</script>
+ 
+</body>
 </html>
